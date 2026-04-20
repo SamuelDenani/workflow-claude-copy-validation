@@ -1,0 +1,62 @@
+name: Deco Content Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - ".deco/blocks/**/*.json"
+
+jobs:
+  content-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # needed for git diff against base branch
+
+      - name: Load review prompt
+        id: prompt
+        run: |
+          PROMPT=$(cat .claude/skills/deco-content-review/SKILL.md)
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          echo "$PROMPT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Run Claude content review
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: ${{ steps.prompt.outputs.content }}
+          claude_args: "--max-turns 10 --model claude-sonnet-4-6"
+
+      - name: Post PR comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body;
+            try {
+              body = fs.readFileSync('pr-comment.md', 'utf8');
+            } catch (e) {
+              body = '⚠️ Não foi possível gerar o relatório de revisão de conteúdo.';
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
+
+      - name: Upload review JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-review-report
+          path: review.json
+          if-no-files-found: warn

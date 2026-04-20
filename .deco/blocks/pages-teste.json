@@ -1,0 +1,21 @@
+{
+  "seo": {
+    "title": "Teste"
+  },
+  "sections": [
+    {
+      "__import": "site/loremIpsum/component.tsx",
+      "title": {
+        "as": "h1",
+        "children": "Pagina de teste"
+      }
+    },
+    {
+      "__import": "site/loremIpsum/component.tsx",
+      "title": {
+        "as": "h1",
+        "children": "Essa é uma página de teste para avaliação do Claudinho fazendo review. Arrasa, Claudinho!"
+      }
+    }
+  ]
+}
