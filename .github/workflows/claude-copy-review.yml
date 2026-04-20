@@ -1,4 +1,4 @@
-name: CLaude Copy Review
+name: Claude Copy Review
 on:
   pull_request:
     types: [opened, synchronize]
@@ -9,6 +9,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
