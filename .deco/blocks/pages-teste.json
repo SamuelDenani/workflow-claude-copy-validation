@@ -14,7 +14,18 @@
       "__import": "site/loremIpsum/component.tsx",
       "title": {
         "as": "h1",
-        "children": "Essa é uma página de teste para avaliação do Claudinho fazendo review. Arrasa, Claudinho!"
+        "children": "Arrasa, Claudinho!"
+      },
+      "description": {
+        "as": "h1",
+        "children": "Essa é uma página de teste para avaliação do Claudinho fazendo review."
+      }
+    },
+    {
+      "__import": "site/copmonents/footer.tsx",
+      "heading": {
+        "as": "h2",
+        "children": "Componente da página teste"
       }
     }
   ]
