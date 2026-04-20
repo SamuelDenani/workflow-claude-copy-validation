@@ -1,4 +1,4 @@
-name: CLaude Copy Review
+name: Claude Copy Review
 on:
   pull_request:
     types: [opened, synchronize]
