@@ -27,6 +27,13 @@
         "as": "h2",
         "children": "Componente da página teste"
       }
+    },
+    {
+      "__import": "site/copmonents/footer.tsx",
+      "heading": {
+        "as": "h6",
+        "children": "Subsubsubsubtítulo"
+      }
     }
   ]
 }
