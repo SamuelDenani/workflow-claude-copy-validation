@@ -5,7 +5,7 @@ description: >
   Use when asked to review content changes in a PR, validate SEO fields, or check copy quality
   in .deco/blocks/*.json files. Reads git diff to scope only modified files.
   DO NOT use for code review, logic validation, or anything outside copy and SEO.
-allowed-tools: Bash, Read, Glob, Grep
+allowed-tools: Bash, Read, Write, Glob, Grep
 ---
 
 # Deco Content Reviewer
@@ -102,11 +102,17 @@ Report cross-file issues under a separate `### 🔄 Consistência entre Arquivos
 
 ---
 
-## Step 5 — Output
+## Step 5 — Output and post
 
-Write `review.json` to the working directory.
-Write `pr-comment.md` to the working directory.
-Print both to stdout so the GitHub Action can capture them as outputs.
+1. Write `review.json` to the working directory (for the Action artifact).
+2. Write `pr-comment.md` to the working directory.
+3. Post the comment to the PR using the `gh` CLI:
+
+   ```bash
+   gh pr comment "$PR_NUMBER" --repo "$REPO" --body-file pr-comment.md
+   ```
+
+   `PR_NUMBER`, `REPO`, and `GH_TOKEN` are provided by the workflow environment. If the `gh` call fails, print the error to stdout — do not silently exit.
 
 ---
 

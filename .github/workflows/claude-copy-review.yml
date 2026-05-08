@@ -12,6 +12,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Load review prompt
         id: prompt
@@ -23,35 +25,17 @@ jobs:
 
       - name: Run Claude content review
         id: claude
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: ${{ steps.prompt.outputs.content }}
           claude_args: |
-            --allowedTools "Write,Read,Bash,mcp__github_inline_comment__create_inline_comment"
+            --allowedTools "Bash,Read,Write,Glob,Grep"
             --model "claude-haiku-4-5"
-
-      - name: Post PR comment
-        if: always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const path = require('path');
-            const file = path.join(process.env.GITHUB_WORKSPACE, 'pr-comment.md');
-            let body;
-            try {
-              body = fs.readFileSync(file, 'utf8');
-            } catch (e) {
-              core.warning(`Could not read ${file}: ${e.message}`);
-              body = '⚠️ Não foi possível gerar o relatório de revisão de conteúdo.';
-            }
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body
-            });
 
       - name: Upload review JSON
         if: always()
